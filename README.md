@@ -44,6 +44,11 @@ This Ansible project provides automation scripts and configurations for managing
     └── update_vars.yml
 ```
 
+## Requirments
+
+This was last tested on Ubuntu 22.04.3 LTS
+Using Ansible Version 2.10.8
+
 ## Usage
 
 Update Variables:

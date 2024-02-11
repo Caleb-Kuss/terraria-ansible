@@ -1,0 +1,118 @@
+---
+- name: Update the server, move world backups to the new server location, save and kill the current server sessions, and spin up new server sessions.
+  hosts: all
+  gather_facts: true
+  become: yes
+  vars_files:
+    - ../vars/update_vars.yml
+
+  tasks:
+    - name: Update the server
+      apt:
+        name: "*"
+        state: latest
+
+    - name: Download the Terraria Server
+      get_url:
+        url: "{{ latest_version_download_URL }}"
+        dest: "/tmp/terraria-server.zip"
+        mode: 0644
+        validate_certs: false
+
+    - name: Extract the server zip to the current directory
+      unarchive:
+        src: "/tmp/terraria-server.zip"
+        dest: "/opt/terraria/current"
+        mode: 0755
+        owner: terraria
+        group: terraria
+        remote_src: yes
+
+    - name: Copy worlds over to the {{ latest_version }} file location
+      copy:
+        src: "{{ item }}"
+        dest: "/opt/terraria/current/{{ latest_version }}/Linux/"
+        remote_src: yes
+        force: no
+      loop:
+        - "/opt/terraria/current/{{ previous_version }}/Linux/World_Two.wld"
+        - "/opt/terraria/current/{{ previous_version }}/Linux/World_Two.wld.bak"
+        - "/opt/terraria/current/{{ previous_version }}/Linux/World_Two.wld.bak2"
+        - "/opt/terraria/current/{{ previous_version }}/Linux/World_One.wld"
+        - "/opt/terraria/current/{{ previous_version }}/Linux/World_One.wld.bak"
+        - "/opt/terraria/current/{{ previous_version }}/Linux/World_One.wld.bak2"
+      tags: cpwrlds
+
+    - name: Ensure extra backup directory of the worlds exists
+      file:
+        path: /opt/terraria/backupworlds
+        state: directory
+
+    - name: Copy worlds over to the backup directory location
+      copy:
+        src: "{{ item }}"
+        dest: "/opt/terraria/backupworlds/"
+        remote_src: yes
+        force: yes
+      ignore_errors: yes
+      loop:
+        - "/opt/terraria/current/{{ previous_version }}/Linux/World_Two.wld"
+        - "/opt/terraria/current/{{ previous_version }}/Linux/World_Two.wld.bak"
+        - "/opt/terraria/current/{{ previous_version }}/Linux/World_Two.wld.bak2"
+        - "/opt/terraria/current/{{ previous_version }}/Linux/World_One.wld"
+        - "/opt/terraria/current/{{ previous_version }}/Linux/World_One.wld.bak"
+        - "/opt/terraria/current/{{ previous_version }}/Linux/World_One.wld.bak2"
+      tags: cpwrlds
+
+    - name: Update latest version in bash script for daily backups
+      lineinfile:
+        path: /root/backup_worlds/backup_terraria_worlds.sh
+        regex: "^latest_version"
+        line: latest_version={{ latest_version }}
+        state: present
+        create: no
+        backup: no
+      tags: bashscript
+
+    - name: Update World_Two latest version
+      ansible.builtin.cron:
+        name: "Autostart World_Two with the updated version on reboot"
+        special_time: reboot
+        job: '/usr/bin/screen -dmS World_Two /bin/bash -c "/opt/terraria/current/{{ latest_version }}/Linux/TerrariaServer.bin.x86_64 -config /opt/terraria/current/Linux/World_Two_Config.txt"'
+        user: root
+        state: present
+      tags: cron
+
+    - name: Update World_One latest version
+      ansible.builtin.cron:
+        name: "Autostart World_One with the updated version on reboot"
+        special_time: reboot
+        job: '/usr/bin/screen -dmS World_One /bin/bash -c "/opt/terraria/current/{{ latest_version }}/Linux/TerrariaServer.bin.x86_64 -config /opt/terraria/current/Linux/World_One_Config.txt"'
+        user: root
+        state: present
+      tags: cron
+
+    - name: Update backupworlds.sh for Terraria worlds daily
+      ansible.builtin.cron:
+        name: "Backup Terraria worlds daily at 0100"
+        hour: "1"
+        minute: "0"
+        state: present
+        user: root
+        job: "/bin/bash /root/backup_worlds/backup_terraria_worlds.sh >> /root/backup_worlds/backup_worlds.log"
+      tags: cron
+
+    - name: Kill the Terraria screens
+      ansible.builtin.shell: /usr/bin/screen -r {{ item }} -p 0 -X stuff 'exit^M'
+      ignore_errors: true
+      loop:
+        - World_Two
+        - World_One
+
+    - name: Spin up the new Terraria servers
+      include_role:
+        name: "{{ item }}"
+      loop:
+        - "../roles/World_Two"
+        - "../roles/World_One"
+      tags: startwrlds

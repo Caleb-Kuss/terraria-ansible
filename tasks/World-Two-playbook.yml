@@ -1,0 +1,6 @@
+---
+- name: Ensure all files are up to date, run World_Two role, and ensure server is started
+  hosts: all
+  gather_facts: true
+  roles:
+    - role: "../roles/World_Two"

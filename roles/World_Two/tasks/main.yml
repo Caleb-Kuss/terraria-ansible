@@ -1,0 +1,22 @@
+---
+- name: Include vars for the current Terraria Server version
+  ansible.builtin.include_vars:
+    dir: /<project-file-path>/vars/
+
+- name: Ensure latest unzip and screen package is installed
+  apt:
+    name:
+      - unzip
+      - screen
+    state: latest
+
+- name: Config file for the server
+  template:
+    src: "World_Two_Config.txt.j2"
+    dest: "/opt/terraria/current/Linux/World_Two_Config.txt"
+    owner: terraria
+    group: terraria
+    mode: 0644
+
+- name: Start the server with the configured world
+  ansible.builtin.shell: /usr/bin/screen -dmS World_Two /bin/bash -c "/opt/terraria/current/{{ latest_version }}/Linux/TerrariaServer.bin.x86_64 -config /opt/terraria/current/Linux/World_Two_Config.txt"

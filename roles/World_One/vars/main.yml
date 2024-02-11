@@ -1,0 +1,44 @@
+---
+world: World_One.wld
+
+#creates a large world if one is not found
+autocreate: 3
+
+# sets the world seed
+seed: AwesomeSeed
+
+# setting the world name
+worldname: World_One
+
+# difficulty 0(normal) 1(expert) 2(master) 3(journey)
+difficulty: 1
+
+# max players
+maxplayers: 20
+
+# Port to open
+port: 7777
+
+# server pass
+password: Pas$w0rd
+
+# Set AutoSave option
+AutoSave: true
+
+# message of the day
+motd: "Welcome to the World!"
+
+# path to the world locations
+worldpath: /home/terraria/Documents/games/terraria/worlds/
+
+# language
+language: "en/US"
+
+#Adds addition cheat protection.
+secure: 1
+
+#Reduces enemy skipping but increases bandwidth usage. The lower the number the less skipping will happen, but more data is sent. 0 is off.
+npcstream: 60
+
+#Sets the number of rolling world backups to keep
+worldrollbackstokeep: 2

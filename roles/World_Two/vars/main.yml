@@ -1,0 +1,45 @@
+---
+world: World_Two.wld
+
+#creates a large world if one is not found
+autocreate: 3
+
+# sets the world seed
+seed: AwesomeSeed
+
+# setting the world name
+worldname: World_Two
+
+# difficulty 0(normal) 1(expert) 2(master) 3(journey)
+difficulty: 2
+
+# max players
+maxplayers: 20
+
+# Port to open
+port: 7778
+
+# server pass
+password: Pas$w0rd
+
+# Set AutoSave option
+AutoSave: true
+
+# message of the day
+motd: "Hey! I'm a fresh new update!"
+
+# path to the world locations
+# change the user path top the new user created by ansible
+worldpath: /home/terraria/Documents/games/terraria/worlds/
+
+# language
+language: "en/US"
+
+#Adds addition cheat protection.
+secure: 1
+
+#Reduces enemy skipping but increases bandwidth usage. The lower the number the less skipping will happen, but more data is sent. 0 is off.
+npcstream: 60
+
+#Sets the number of rolling world backups to keep
+worldrollbackstokeep: 2

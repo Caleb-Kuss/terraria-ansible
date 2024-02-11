@@ -1,0 +1,5 @@
+[Terraria]
+server ansible_host=<server-ip> ansible_user=<ansible-user>
+
+
+

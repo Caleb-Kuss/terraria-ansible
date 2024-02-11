@@ -1,0 +1,41 @@
+---
+
+
+world: /home/terraria/Documents/games/terraria/worlds/Terraria.wld
+
+#creates a small world if one is not found
+autocreate: 1
+
+# sets the world seed
+seed: AwesomeSeed
+
+# setting the world name
+worldname: Terraria
+
+# difficulty 0(normal) 1(expert)
+difficulty: 3
+
+# max players
+maxplayers: 8
+
+# Port to open
+port: 7777
+
+# server pass
+password: p@ssw0rd
+
+# message of the day
+motd: "Welcome to the server!!"
+
+# path to the world locations
+# change the user path top the new user created by ansible
+worldpath: /home/terraria/Documents/games/terraria/worlds/
+
+# language
+language: "en/US"
+
+#Adds addition cheat protection.
+secure: 1
+
+#Reduces enemy skipping but increases bandwidth usage. The lower the number the less skipping will happen, but more data is sent. 0 is off.
+npcstream: 60
